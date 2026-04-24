@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Country Maker Studio</title>
+    
+    <link rel="icon" type="image/png" href="faviconFlaggiso63.png">
+
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* The Flag Preview Area */
+        #studio-screen {
+            width: 300px;
+            height: 200px;
+            background-color: #444;
+            position: relative;
+            border: 5px solid #fff;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* The Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-add {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background-color: #00ff88;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* The Pattern Menu (Pop-up) */
+        #pattern-menu {
+            display: none; /* Hidden until + is pressed */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            background: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .pattern-opt {
+            padding: 10px;
+            background: #555;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pattern-opt:hover { background: #777; }
+    </style>
+</head>
+<body>
+
+    <h1>Country Maker Studio</h1>
+
+    <div id="studio-screen">
+        </div>
+
+    <div class="controls">
+        <button class="btn-add" onclick="toggleMenu()">+</button>
+        <button class="btn-add" style="background:#ff4444" onclick="location.reload()">↺</button>
+    </div>
+
+    <div id="pattern-menu">
+        <button class="pattern-opt" onclick="addLayer('base')">Background Color</button>
+        <button class="pattern-opt" onclick="addLayer('nordic')">Nordic Cross (Denmark)</button>
+        <button class="pattern-opt" onclick="addLayer('stripes')">Stripes (USA/Greece)</button>
+        <button class="pattern-opt" onclick="addLayer('uk')">Union Jack (UK)</button>
+        <button class="pattern-opt" onclick="addLayer('symbol-hs')">Hammer & Sickle</button>
+        <button class="pattern-opt" onclick="addLayer('symbol-angola')">Angola Symbol</button>
+    </div>
+
+    <script>
+        const screen = document.getElementById('studio-screen');
+        const menu = document.getElementById('pattern-menu');
+
+        function toggleMenu() {
+            menu.style.display = menu.style.display === 'grid' ? 'none' : 'grid';
+        }
+
+        function addLayer(type) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 600;
+            canvas.height = 400;
+            const ctx = canvas.getContext('2d');
+            
+            const color = prompt("Enter a color (red, blue, white, etc.):", "white");
+            if (!color) return;
+            
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 40;
+
+            if (type === 'base') {
+                ctx.fillRect(0, 0, 600, 400);
+            } 
+            else if (type === 'nordic') {
+                ctx.fillRect(160, 0, 70, 400); // Up/Down
+                ctx.fillRect(0, 165, 600, 70); // Front/Back
+            } 
+            else if (type === 'stripes') {
+                for(let i=0; i<9; i+=2) {
+                    ctx.fillRect(0, i * (400/9), 600, 400/9);
+                }
+            } 
+            else if (type === 'uk') {
+                // Diagonal
+                ctx.beginPath();
+                ctx.moveTo(0,0); ctx.lineTo(600,400);
+                ctx.moveTo(600,0); ctx.lineTo(0,400);
+                ctx.stroke();
+                // Straight
+                ctx.fillRect(265, 0, 70, 400);
+                ctx.fillRect(0, 165, 600, 70);
+            } 
+            else if (type === 'symbol-hs') {
+                ctx.font = "120px serif";
+                ctx.fillText("☭", 50, 120);
+            } 
+            else if (type === 'symbol-angola') {
+                // The Gear and Machete style
+                ctx.beginPath();
+                ctx.arc(300, 200, 80, 0.6 * Math.PI, 1.9 * Math.PI);
+                ctx.lineWidth = 15;
+                ctx.stroke();
+                ctx.font = "60px serif";
+                ctx.fillText("⭐", 280, 210);
+            }
+
+            screen.appendChild(canvas);
+            toggleMenu(); // Hide menu after picking
+        }
+    </script>
+</body>
+</html>
